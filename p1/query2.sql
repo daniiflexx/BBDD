@@ -1,0 +1,1 @@
+SELECT DATE_PART('day', shippeddate::timestamp - orderdate::timestamp) from products p join productlines;

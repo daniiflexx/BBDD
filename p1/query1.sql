@@ -1,0 +1,1 @@
+select c.customernumber, c.customername, sum(p.amount) from orderdetails ord join products pr on ord.productcode=pr.productcode join orders o on ord.ordernumber=o.ordernumber join customers c on o.customernumber=c.customernumber join payments p on p.customernumber=c.customernumber where pr.productname='1940 Ford Pickup Truck' group by c.customernumber;

@@ -1,0 +1,2 @@
+with total as (SELECT ord.productcode, orde.productcode, count(ord.ordernumber) as cestas from orderdetails ord join orderdetails orde 
+on ord.ordernumber=orde.ordernumber where ord.productcode!=orde.productcode group by ord.productcode, orde.productcode) SELECT * from total where cestas > 1;

@@ -1,0 +1,2 @@
+with total as (SELECT of.officecode, sum(ord.quantityordered) as quantity from orderdetails ord natural join orders orde  natural join customers c join employees emp on emp.employeenumber=c.salesrepemployeenumber join offices of on emp.officecode=of.officecode
+group by of.officecode) SELECT max(total.quantity) from total;
