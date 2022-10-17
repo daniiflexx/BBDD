@@ -1,2 +1,12 @@
-(SELECT of.officecode as oficina, sum(ord.quantityordered) as cantidad from orderdetails ord natural join orders orde  natural join customers c join employees emp on emp.employeenumber=c.salesrepemployeenumber join offices of on emp.officecode=of.officecode
-group by of.officecode order by cantidad desc LIMIT 1);
+SELECT of.officecode            AS oficina,
+       Sum(ord.quantityordered) AS cantidad
+FROM   orderdetails ord
+       NATURAL JOIN orders orde
+       NATURAL JOIN customers c
+       JOIN employees emp
+         ON emp.employeenumber = c.salesrepemployeenumber
+       JOIN offices of
+         ON emp.officecode = of.officecode
+GROUP  BY of.officecode
+ORDER  BY cantidad DESC
+LIMIT  1; 

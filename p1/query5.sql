@@ -1,3 +1,20 @@
-with total as (select officecode as offi, country as pais from offices group by officecode
-EXCEPT select of.officecode, of.country from employees emp join customers c on c.salesrepemployeenumber=emp.employeenumber natural join orders ord 
-join offices of on emp.officecode=of.officecode where ord.orderdate between '2003-01-01' and '2003-12-31' group by of.officecode) SELECT total.pais, count(total.offi) as oficinas from total group by total.pais; 
+WITH total
+     AS (SELECT officecode AS offi,
+                country    AS pais
+         FROM   offices
+         GROUP  BY officecode
+         EXCEPT
+         SELECT OF.officecode,
+                OF.country
+         FROM   employees emp
+                JOIN customers c
+                  ON c.salesrepemployeenumber = emp.employeenumber
+                natural JOIN orders ord
+                JOIN offices OF
+                  ON emp.officecode = OF.officecode
+         WHERE  ord.orderdate BETWEEN '2003-01-01' AND '2003-12-31'
+         GROUP  BY OF.officecode)
+SELECT total.pais,
+       Count(total.offi) AS oficinas
+FROM   total
+GROUP  BY total.pais; 

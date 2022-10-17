@@ -1,3 +1,8 @@
-SELECT emp from employees emp join employees em on emp.reportsto=em.employeenumber join employees e on em.reportsto=e.employeenumber
-where e.reportsto is NULL;
+SELECT emp
+FROM   employees emp
+       JOIN employees em
+         ON emp.reportsto = em.employeenumber
+       JOIN employees e
+         ON em.reportsto = e.employeenumber
+WHERE  e.reportsto IS NULL; 
  
