@@ -1,4 +1,5 @@
-SELECT emp
+SELECT emp.employeenumber,
+       emp.lastname
 FROM   employees emp
        JOIN employees em
          ON emp.reportsto = em.employeenumber

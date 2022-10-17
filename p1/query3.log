@@ -1,9 +1,9 @@
 query3: Empleados que reportan a otros empleados que reportan al director.
-                                             emp                                              
-----------------------------------------------------------------------------------------------
- (1088,Patterson,William,x4871,wpatterson@classicmodelcars.com,6,1056,"Sales Manager (APAC)")
- (1102,Bondur,Gerard,x5408,gbondur@classicmodelcars.com,4,1056,"Sale Manager (EMEA)")
- (1143,Bow,Anthony,x5428,abow@classicmodelcars.com,1,1056,"Sales Manager (NA)")
- (1621,Nishi,Mami,x101,mnishi@classicmodelcars.com,5,1056,"Sales Rep")
+ employeenumber | lastname  
+----------------+-----------
+           1088 | Patterson
+           1102 | Bondur
+           1143 | Bow
+           1621 | Nishi
 (4 filas)
 

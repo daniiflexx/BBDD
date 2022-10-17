@@ -17,4 +17,5 @@ WITH total
 SELECT total.pais,
        Count(total.offi) AS oficinas
 FROM   total
-GROUP  BY total.pais; 
+GROUP  BY total.pais
+ORDER  BY oficinas DESC; 
