@@ -12,9 +12,10 @@ WITH total
          GROUP  BY c.customernumber)
 SELECT total.cnb,
        total.cna,
-       Sum(p.amount)
+       Sum(p.amount) suma
 FROM   total
        JOIN payments p
          ON p.customernumber = total.cnb
 GROUP  BY total.cnb,
-          total.cna;
+          total.cna
+ORDER  BY suma DESC;
