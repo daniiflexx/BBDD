@@ -93,7 +93,7 @@ int ShowMainMenu() {
                " (3) Customers\n"
                " (4) Exit\n\n"
                "Enter a number that corresponds to your choice > ");
-        if (!fgets(buf, 16, stdin))
+        if (!fscanf(stdin, "%s", buf))
             /* reading input failed, give up: */
             nSelected =0;
         else
@@ -155,7 +155,7 @@ void ShowProductsMenu() {
                " (3) Print back\n\n");
 
         printf("Enter a number that corresponds to your choice > ");
-        if (!fgets(buf, 16, stdin))
+        if (!fscanf(stdin, "%s", buf))
             /* reading input failed, give up: */
             nSelected =0;
         else
