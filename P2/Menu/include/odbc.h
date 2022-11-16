@@ -3,6 +3,7 @@
 
 #include <sql.h>
 #include <sqlext.h>
+#include <string.h>
 
 /* CONNECTION PARAMETERS, ADAPT TO YOUR SCENARIO */
 #define CONNECTION_PARS "driver={PostgreSQL ANSI};uid=alumnodb;" \
