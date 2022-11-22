@@ -90,10 +90,9 @@ int PrintRange() {
     int ret; /* odbc.c */
     SQLRETURN ret2; /* ODBC API return status */
     #define BufferLength 512
-    int i= 0;
     int u= 0;
     char x[BufferLength] = "\0";
-    char **s;
+    char s[3][BufferLength];
     char y[BufferLength] = "\0";
     char z[BufferLength] = "\0";
     char a[BufferLength] = "\0";
@@ -114,14 +113,20 @@ int PrintRange() {
         return ret;
     }
 
-
+    s[0][0]='\0';s[1][0]='\0';s[2][0]='\0';
     printf("Enter dates (YYYY-MM-DD - YYYY-MM-DD) > ");
     (void) fflush(stdout);
     if (fgets(x, (int) sizeof(x), stdin) != NULL) {
         x[strlen(x) - 1] = '\0';
-        s = ft_split(x, ' ');
-        
-        if (s[0] != NULL && s[1] != NULL && s[2] != NULL)
+        if (strlen(x) > 22 && strlen(x) < 24) {
+            strncpy(s[0], x, 10);
+            s[0][10] = '\0';
+            strncpy(s[1], x+11, 1);
+            s[1][2] = '\0';
+            strncpy(s[2], x+13, 10);
+            s[2][10] = '\0';
+        }
+        if (s[0][0] != '\0' && s[1][0] != '\0' && s[2][0] != '\0')
         {
             (void) SQLBindParameter(stmt, 1, SQL_PARAM_INPUT,
                                     SQL_C_CHAR, SQL_CHAR,
@@ -148,11 +153,6 @@ int PrintRange() {
         (void) SQLCloseCursor(stmt);
 
         (void) fflush(stdout);
-        while (s[i] != NULL) {
-            free(s[i]);
-            i++;
-        }
-        free(s);
     }
 
     /* free up statement handle */

@@ -13,7 +13,7 @@ PG_RESTORE = pg_restore
 
 CC = gcc -g
 CFLAGS = -Wall -Wextra -pedantic #-ansi
-LDLIBS = -lodbc -L. -lsplit
+LDLIBS = -lodbc
 # recompile if this heder changes
 HEADERS = odbc.h
 EXE = menu
