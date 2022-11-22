@@ -27,6 +27,7 @@ int PrintStock()
     #define BufferLength 512
     char x[BufferLength] = "\0";
     char y[BufferLength] = "\0";
+    int u = 0;
 
     /* CONNECT */
     ret = odbc_connect(&env, &dbc);
@@ -57,8 +58,10 @@ int PrintStock()
 
         /* Loop through the rows in the result-set */
         while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("Quantity in stock = %s\n", y);
+            u += printf("Quantity in stock = %s\n", y);
         }
+        if (u == 0)
+            printf("---No results or invalid input---\n");
         printf("\n");
         (void) SQLCloseCursor(stmt);
 
@@ -101,6 +104,7 @@ int PrintFind()
     char k[BufferLength] = "\0";
     char aux[BufferLength] = "\0";
     int i = 0;
+    int u = 0;
 
     /* CONNECT */
     ret = odbc_connect(&env, &dbc);
@@ -140,8 +144,10 @@ int PrintFind()
 
         /* Loop through the rows in the result-set */
         while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("%s %s\n", k, y);
+            u += printf("%s %s\n", k, y);
         }
+        if (u == 0)
+            printf("---No results or invalid input---\n");
         printf("\n");
         (void) SQLCloseCursor(stmt);
 

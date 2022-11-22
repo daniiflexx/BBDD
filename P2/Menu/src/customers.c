@@ -89,12 +89,14 @@ int Find() {
             length = 0;
             while (m < 10 && SQL_SUCCEEDED(ret = SQLFetch(stmt)))
             {
-                length += snprintf(p[i] + length, BufferLength * 5 - length, "%s %s %s %s\n", k, y, j, h);
+                length += snprintf(p[i] + length, BufferLength * 50, "%s %s %s %s\n", k, y, j, h);
                 m++;
             } 
             i++;
         }
-        if (p[1][0] == '\0') {
+        if (p[0][0] == '\0')
+            printf("---No results or invalid input---\n\n");
+        else if (p[1][0] == '\0') {
             printf("%s\n", p[0]);
         }
         else {
@@ -109,7 +111,7 @@ int Find() {
                     i--;
                 printf("\n");
         }
-        printf("\n");
+        printf("\n\n");
         (void) SQLCloseCursor(stmt);
 
         (void) fflush(stdout);
@@ -195,12 +197,15 @@ int ListProducts() {
             length = 0;
             while (m < 10 && SQL_SUCCEEDED(ret = SQLFetch(stmt)))
             {
-                length += snprintf(p[i] + length, BufferLength * 3 - length , "%s %s\n", k, y);
+                length += snprintf(p[i] + length, BufferLength * 30 , "%s %s\n", k, y);
                 m++;
             } 
             i++;
         }
-        if (p[1][0] == '\0') {
+
+        if (p[0][0] == '\0')
+            printf("---No results or invalid input---\n");
+        else if (p[1][0] == '\0') {
             printf("%s\n", p[0]);
         }
         else {
@@ -254,7 +259,7 @@ int Balance() {
     #define BufferLength 512
     char x[BufferLength] = "\0";
     char k[BufferLength] = "\0";
-
+    int i = 0;
     /* CONNECT */
     ret = odbc_connect(&env, &dbc);
     if (!SQL_SUCCEEDED(ret)) {
@@ -289,8 +294,10 @@ int Balance() {
 
         /* Loop through the rows in the result-set */
         while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("Balance = %s\n", k);
+            i += printf("Balance = %s\n", k);
         }
+        if (i == 0)
+            printf("---No results or invalid input---\n");
         printf("\n");
         (void) SQLCloseCursor(stmt);
 

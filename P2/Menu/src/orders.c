@@ -9,6 +9,7 @@ int PrintOpen() {
     SQLUSMALLINT ucolumns = 0;
     SQLUSMALLINT i = 0;
     SQLINTEGER x = 0;
+    int u = 0;
     #define BufferLength 512
     char y[BufferLength] = "\0";
 
@@ -53,10 +54,12 @@ int PrintOpen() {
     ret = SQLBindCol(stmt, 1, SQL_C_SLONG, &x, 0, NULL);
     ret = SQLBindCol(stmt, 2, SQL_C_CHAR, (SQLCHAR *) y, BufferLength, NULL);
     /* Loop through the rows in the result-set */
+    u = 0;
     while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-        printf("%d\t%s\n", (int)x, y);
+        u += printf("%d\t%s\n", (int)x, y);
     }
-
+    if (u == 0)
+        printf("---No results or invalid input---\n");
     /* DISCONNECT */
     ret = odbc_disconnect(env, dbc);
     if (!SQL_SUCCEEDED(ret)) {
@@ -74,6 +77,7 @@ int PrintRange() {
     SQLRETURN ret2; /* ODBC API return status */
     #define BufferLength 512
     int i= 0;
+    int u= 0;
     char x[BufferLength] = "\0";
     char **s;
     char y[BufferLength] = "\0";
@@ -120,9 +124,11 @@ int PrintRange() {
 
             /* Loop through the rows in the result-set */
             while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-                printf("%s %s %s\n", y, z, a);
+                u += printf("%s %s %s\n", y, z, a);
             }
         }
+        if (u == 0)
+                printf("---No results or invalid input---\n");
         printf("\n");
         
         (void) SQLCloseCursor(stmt);
@@ -166,6 +172,7 @@ int PrintDetail() {
     char b[BufferLength] = "\0";
     char c[BufferLength] = "\0";
     char d[BufferLength] = "\0";
+    int u = 0;
 
 
 
@@ -212,8 +219,10 @@ int PrintDetail() {
         }
         /* Loop through the rows in the result-set */
         while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("%s %s %s\n", b, c, d);
+            u += printf("%s %s %s\n", b, c, d);
         }
+        if (u == 0)
+            printf("---No results or invalid input---\n");
         printf("\n");
         (void) SQLCloseCursor(stmt);
 
