@@ -6,6 +6,5 @@
 #include "orders.h"
 #include "customers.h"
 
-int ShowMainMenu();
-void PrintBack();
+
 #endif

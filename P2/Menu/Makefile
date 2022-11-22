@@ -1,6 +1,6 @@
 export PGDATABASE:=classicmodels
-export PGUSER :=alumnodb
-export PGPASSWORD :=alumnodb
+export PGUSER :=postgres
+export PGPASSWORD :=postgres
 export PGCLIENTENCODING:=LATIN9
 export PGHOST:=localhost
 
@@ -13,8 +13,7 @@ PG_RESTORE = pg_restore
 
 CC = gcc -g
 CFLAGS = -Wall -Wextra -pedantic #-ansi
-LDLIBS = -lodbc
-INC = -Iinclude
+LDLIBS = -lodbc -L. -lsplit
 # recompile if this heder changes
 HEADERS = odbc.h
 EXE = menu
@@ -24,13 +23,15 @@ OBJS = $(patsubst src/%, obj/%, $(SRCS:.c=.o))
 
 all : BBDD $(EXE)
 
+compile: $(EXE)
+
 BBDD: dropdb createdb restore
 
 $(EXE): $(OBJS) 
 	$(CC) -o $(EXE) $(OBJS) $(LDLIBS)
 
 obj/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
 	rm -f obj/*.o core $(EXE) 

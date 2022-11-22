@@ -1,61 +1,4 @@
-#include "orders.h"
-
-void ShowOrdersMenu() {
-    int nChoice = 0;
-    do {
-        nChoice = ShowOrdersSubMenu();
-        switch (nChoice) {
-
-            case 1: {
-                PrintOpen();
-            }
-                break;
-
-            case 2: {
-                PrintRange();
-            }
-                break;
-
-            case 3: {
-                PrintDetail();
-            }
-                break;
-            case 4: {
-                printf("Back\n\n");
-            }
-                break;
-        }
-    } while (nChoice != 4);
-}
-
- int ShowOrdersSubMenu() {
-    int nSelected = 0;
-    char buf[16];
-
-    do {
-
-        printf(" (1) Print open\n"
-               " (2) Print range\n"
-               " (3) Print detail\n"
-               " (4) Print back\n\n");
-
-        printf("Enter a number that corresponds to your choice > ");
-        if (!fgets(buf, 16, stdin))
-            /* reading input failed, give up: */
-            nSelected =0;
-        else
-            /* have some input, convert it to integer: */
-            nSelected = atoi(buf);
-        printf("\n");
-
-
-        if ((nSelected < 1) || (nSelected > 4)) {
-            printf("You have entered an invalid choice. Please try again\n\n\n");
-        }
-    } while ((nSelected < 1) || (nSelected > 4));
-    
-    return nSelected;
-}
+#include "../inc/orders.h"
 
 int PrintOpen() {
     SQLHENV env = NULL;
@@ -157,7 +100,7 @@ int PrintRange() {
     printf("Enter dates (YYYY-MM-DD - YYYY-MM-DD) > ");
     (void) fflush(stdout);
     if (fgets(x, (int) sizeof(x), stdin) != NULL) {
-        x[strlen(x) - 1] = 0;
+        x[strlen(x) - 1] = '\0';
         s = ft_split(x, ' ');
         
         if (s[0] != NULL && s[1] != NULL && s[2] != NULL)
@@ -206,11 +149,90 @@ int PrintRange() {
     }
 
     return EXIT_SUCCESS;
-    return 0;
 }
 
 
 int PrintDetail() {
-    return 0;
+    SQLHENV env = NULL;
+    SQLHDBC dbc = NULL;
+    SQLHSTMT stmt = NULL;
+    int ret; /* odbc.c */
+    SQLRETURN ret2; /* ODBC API return status */
+    #define BufferLength 512
+    char x[BufferLength] = "\0";
+    char y[BufferLength] = "\0";
+    char z[BufferLength] = "\0";
+    char a[BufferLength] = "\0";
+    char b[BufferLength] = "\0";
+    char c[BufferLength] = "\0";
+    char d[BufferLength] = "\0";
+
+
+
+
+    /* CONNECT */
+    ret = odbc_connect(&env, &dbc);
+    if (!SQL_SUCCEEDED(ret)) {
+        return EXIT_FAILURE;
+    }
+
+    /* Allocate a statement handle */
+    ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc, &stmt);
+    ret = SQLPrepare(stmt, (SQLCHAR*) "with total as (select sum(ordd.priceeach*quantityordered) as importe, ord.orderdate, ord.status from orders ord  natural join orderdetails ordd where ord.ordernumber = ? group by ord.orderdate, ord.status) select total.importe, total.orderdate, total.status, ord.productcode, ord.quantityordered, ord.priceeach from total, orderdetails ord where ord.ordernumber = ? order by ord.orderlinenumber ", SQL_NTS);
+    if (!SQL_SUCCEEDED(ret)) {
+        odbc_extract_error("", stmt, SQL_HANDLE_ENV);
+        return ret;
+    }
+
+
+    printf("Enter ordernumber > ");
+    (void) fflush(stdout);
+    if (fgets(x, (int) sizeof(x), stdin) != NULL) {
+        x[strlen(x) - 1] = '\0';
+        (void) SQLBindParameter(stmt, 1, SQL_PARAM_INPUT,
+                                SQL_C_CHAR, SQL_VARCHAR,
+                                0, 0, x, 0, NULL);
+        (void) SQLBindParameter(stmt, 2, SQL_PARAM_INPUT,
+                                SQL_C_CHAR, SQL_VARCHAR,
+                                0, 0, x, 0, NULL);
+
+        (void) SQLExecute(stmt);
+        
+        (void) SQLBindCol(stmt, 1, SQL_C_CHAR,(SQLCHAR *) y, BufferLength, NULL);
+        (void) SQLBindCol(stmt, 2, SQL_C_CHAR,(SQLCHAR *) z, BufferLength, NULL);
+        (void) SQLBindCol(stmt, 3, SQL_C_CHAR,(SQLCHAR *) a, BufferLength, NULL);
+        (void) SQLBindCol(stmt, 4, SQL_C_CHAR,(SQLCHAR *) b, BufferLength, NULL);
+        (void) SQLBindCol(stmt, 5, SQL_C_CHAR,(SQLCHAR *) c, BufferLength, NULL);
+        (void) SQLBindCol(stmt, 6, SQL_C_CHAR,(SQLCHAR *) d, BufferLength, NULL);
+
+
+        
+        if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
+            printf("%s %s\n%s\n%s %s %s\n", z, a, y, b, c, d);
+        }
+        /* Loop through the rows in the result-set */
+        while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
+            printf("%s %s %s\n", b, c, d);
+        }
+        printf("\n");
+        (void) SQLCloseCursor(stmt);
+
+        (void) fflush(stdout);
+    }
+
+    /* free up statement handle */
+    ret2 = SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+    if (!SQL_SUCCEEDED(ret2)) {
+        odbc_extract_error("", stmt, SQL_HANDLE_STMT);
+        return ret;
+    }
+
+    /* DISCONNECT */
+    ret = odbc_disconnect(env, dbc);
+    if (!SQL_SUCCEEDED(ret)) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 

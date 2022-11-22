@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include "odbc.h"
 
-void ShowProductsMenu();
-int ShowProductsSubMenu();
 int PrintStock();
-void PrintFind();
+int PrintFind();
 #endif

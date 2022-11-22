@@ -5,11 +5,9 @@
 #include <stdlib.h>
 #include "odbc.h"
 
-void ShowOrdersMenu();
+char **ft_split(char const *s, char c);
 int PrintOpen();
 int PrintDetail();
 int PrintRange();
-int ShowOrdersSubMenu();
-char **ft_split(char const *s, char c);
 
 #endif

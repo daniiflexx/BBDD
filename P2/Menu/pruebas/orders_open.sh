@@ -2,7 +2,7 @@
 
 set timeout -1
 
-spawn ./menu
+spawn ../menu
 
 expect "Enter a number that corresponds to your choice > "
 send -- "2\r"

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-static int		numstring(char const *s1, char c)
+int		numstring(char const *s1, char c)
 {
 	int	comp;
 	int	cles;
@@ -24,7 +24,7 @@ static int		numstring(char const *s1, char c)
 	return (comp);
 }
 
-static int		numchar(char const *s2, char c, int i)
+int		numchar(char const *s2, char c, int i)
 {
 	int	lenght;
 
@@ -37,12 +37,13 @@ static int		numchar(char const *s2, char c, int i)
 	return (lenght);
 }
 
-static char		**freee(char const **dst, int j)
+char		**freee(char const **dst, int j)
 {
 	while (j > 0)
 	{
 		j--;
-		free((void *)dst[j]);
+		if (dst[j])
+			free((void *)dst[j]);
 	}
 	free(dst);
 	return (NULL);
