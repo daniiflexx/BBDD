@@ -1,6 +1,6 @@
 export PGDATABASE:=classicmodels
-export PGUSER :=postgres
-export PGPASSWORD :=postgres
+export PGUSER :=alumnodb
+export PGPASSWORD :=alumnodb
 export PGCLIENTENCODING:=LATIN9
 export PGHOST:=localhost
 

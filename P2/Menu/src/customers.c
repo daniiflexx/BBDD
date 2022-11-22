@@ -23,13 +23,17 @@ int Find() {
     int ret; /* odbc.c */
     SQLRETURN ret2; /* ODBC API return status */
     #define BufferLength 512
+    char p[BufferLength][BufferLength];
     char x[BufferLength] = "\0";
     char y[BufferLength] = "\0";
     char k[BufferLength] = "\0";
     char j[BufferLength] = "\0";
     char h[BufferLength] = "\0";
     char aux[BufferLength] = "\0";
+    char aux2[3] = "\0";
     int i = 0;
+    int m = 0;
+    int length = 0;
 
     /* CONNECT */
     ret = odbc_connect(&env, &dbc);
@@ -72,16 +76,44 @@ int Find() {
         (void) SQLBindCol(stmt, 2, SQL_C_CHAR,(SQLCHAR *) y, BufferLength, NULL);
         (void) SQLBindCol(stmt, 3, SQL_C_CHAR,(SQLCHAR *) j, BufferLength, NULL);
         (void) SQLBindCol(stmt, 4, SQL_C_CHAR,(SQLCHAR *) h, BufferLength, NULL);
-
-        i = 0;
+        
+        for ( i = 0; i < BufferLength; i++)
+        {
+            p[i][0] = '\0';
+        }
+        
         /* Loop through the rows in the result-set */
-        while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("%s %s %s %s\n", k, y, j, h);
+        i = 0;
+        while (SQL_SUCCEEDED(ret)) {
+            m = 0;
+            length = 0;
+            while (m < 10 && SQL_SUCCEEDED(ret = SQLFetch(stmt)))
+            {
+                length += snprintf(p[i] + length, BufferLength * 5 - length, "%s %s %s %s\n", k, y, j, h);
+                m++;
+            } 
+            i++;
+        }
+        if (p[1][0] == '\0') {
+            printf("%s\n", p[0]);
+        }
+        else {
+            i = 0;
+            while (strcmp(aux2, "e\n") != 0) {
+                printf("--------------------------------------------------------------\n- Introduce 'e' for exit, '<' to back page, '>' to next page -\n--------------------------------------------------------------\n%s\ncommand :> ", p[i]);
+                if (!fgets(aux2, (int)sizeof(aux2),stdin))
+                    break;
+                if (strcmp(aux2, ">\n") == 0 && p[i+1][0] != '\0')
+                    i++;
+                if (strcmp(aux2, "<\n") == 0 && i - 1 >= 0)
+                    i--;
+                printf("\n");
         }
         printf("\n");
         (void) SQLCloseCursor(stmt);
 
         (void) fflush(stdout);
+        }
     }
 
     /* free up statement handle */
@@ -117,6 +149,11 @@ int ListProducts() {
     char x[BufferLength] = "\0";
     char y[BufferLength] = "\0";
     char k[BufferLength] = "\0";
+    char p[BufferLength][BufferLength];
+    char aux2[3] = "\0";
+    int length = 0;
+    int i = 0;
+    int m = 0;
 
     /* CONNECT */
     ret = odbc_connect(&env, &dbc);
@@ -146,10 +183,38 @@ int ListProducts() {
         
         (void) SQLBindCol(stmt, 1, SQL_C_CHAR,(SQLCHAR *) k, BufferLength, NULL);
         (void) SQLBindCol(stmt, 2, SQL_C_CHAR,(SQLCHAR *) y, BufferLength, NULL);
-
+        for ( i = 0; i < BufferLength; i++)
+        {
+            p[i][0] = '\0';
+        }
+        
         /* Loop through the rows in the result-set */
-        while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-            printf("%s %s\n", k, y);
+        i = 0;
+        while (SQL_SUCCEEDED(ret)) {
+            m = 0;
+            length = 0;
+            while (m < 10 && SQL_SUCCEEDED(ret = SQLFetch(stmt)))
+            {
+                length += snprintf(p[i] + length, BufferLength * 3 - length , "%s %s\n", k, y);
+                m++;
+            } 
+            i++;
+        }
+        if (p[1][0] == '\0') {
+            printf("%s\n", p[0]);
+        }
+        else {
+            i = 0;
+            while (strcmp(aux2, "e\n") != 0) {
+                printf("--------------------------------------------------------------\n- Introduce 'e' for exit, '<' to back page, '>' to next page -\n--------------------------------------------------------------\n%s\ncommand :> ", p[i]);
+                if (!fgets(aux2, (int)sizeof(aux2), stdin))
+                    break;
+                if (strcmp(aux2, ">\n") == 0 && p[i + 1][0] != '\0')
+                    i++;
+                if (strcmp(aux2, "<\n") == 0 && i - 1 >= 0)
+                    i--;
+                printf("\n");
+            }
         }
         printf("\n");
         (void) SQLCloseCursor(stmt);
