@@ -1,5 +1,12 @@
 #include "../inc/orders.h"
 
+/**
+ * @brief execute a query to print the not shipped orders
+ *
+ *
+ * @return EXIT_SUCEEDED if everything is okay or EXIT_FAILURE if there is any error
+ * @author Iñigo Alvarez and Daniel Cruz
+ */
 int PrintOpen() {
     SQLHENV env = NULL;
     SQLHDBC dbc = NULL;
@@ -69,6 +76,13 @@ int PrintOpen() {
     return EXIT_SUCCESS;
 }
 
+/**
+ * @brief execute a query to print the required orders between two dates
+ *
+ *
+ * @return EXIT_SUCEEDED if everything is okay or EXIT_FAILURE if there is any error
+ * @author Iñigo Alvarez and Daniel Cruz
+ */
 int PrintRange() {
     SQLHENV env = NULL;
     SQLHDBC dbc = NULL;
@@ -157,7 +171,13 @@ int PrintRange() {
     return EXIT_SUCCESS;
 }
 
-
+/**
+ * @brief execute a query to print an orders and its products
+ *
+ *
+ * @return EXIT_SUCEEDED if everything is okay or EXIT_FAILURE if there is any error
+ * @author Iñigo Alvarez and Daniel Cruz
+ */
 int PrintDetail() {
     SQLHENV env = NULL;
     SQLHDBC dbc = NULL;
