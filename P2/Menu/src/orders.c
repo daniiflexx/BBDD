@@ -54,7 +54,7 @@ int PrintOpen() {
     ret = SQLBindCol(stmt, 2, SQL_C_CHAR, (SQLCHAR *) y, BufferLength, NULL);
     /* Loop through the rows in the result-set */
     while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-        printf("%d\t%s\n", x, y);
+        printf("%d\t%s\n", (int)x, y);
     }
 
     /* DISCONNECT */

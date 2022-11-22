@@ -28,7 +28,7 @@ void odbc_extract_error(char *fn, SQLHANDLE handle, SQLSMALLINT type) {
         ret = SQLGetDiagRec(type, handle, ++i, (SQLCHAR *) state, &native,
                 (SQLCHAR *) text, bufferLength, &len );
         if (SQL_SUCCEEDED(ret)) {
-            printf("%s:%d:%d:%s\n", state, i, native, text);
+            printf("%s:%d:%d:%s\n", state, i, (int)native, text);
         }
     } while( ret == SQL_SUCCESS );
 }
