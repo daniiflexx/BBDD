@@ -12,6 +12,7 @@ static int no_deleted_registers = NO_DELETED_REGISTERS;
 void replaceExtensionByIdx(const char *fileName, char * indexName) {
     size_t l;
     l = strlen(fileName);
+    indexName[0] = 0;
     strncat(indexName, fileName, l - 3);
     strcat(indexName, "idx");
 }
@@ -235,7 +236,8 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     return true;
 }
 
-#ifdef DENERDEFINED
+#ifndef DENERDEFINED
+#define DENERDEFINED
 bool addTableEntry(Book * book, const char * dataName,
                    const char * indexName)
 {
@@ -282,8 +284,8 @@ bool addTableEntry(Book * book, const char * dataName,
         new_book = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
         fprintf(stderr, "new_book=%d", new_book);
     }
-    memcpy(node.book_id, book_id,4);
-    node.offset = bookOffset;
+    memcpy(node.book_id, book->book_id,4);
+    node.offset = book->title_len;
     node.right = -1;
     node.left = -1;
     node.parent = nodeIDOrDataOffset;
@@ -293,7 +295,7 @@ bool addTableEntry(Book * book, const char * dataName,
           nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
           SEEK_SET);
     fread(&node, INDEX_REGISTER_SIZE, 1, dataFileHandler);
-    if (memcmp(book_id,node.book_id,4) <0)
+    if (memcmp(book->book_id,node.book_id,4) <0)
         node.left = new_book;
     else
         node.right = new_book;

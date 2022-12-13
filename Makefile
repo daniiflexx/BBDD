@@ -15,7 +15,7 @@ checkCreateIndex.o checkPrint.o checkFindKey.o checkAddIndexEntry.o
 	@echo Compiling $<...
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(EXE): $(DEPS) $(OBJ)
+$EXE: $(DEPS) $(OBJ)
 	$(CC) -o $(EXE) $(OBJ) $(LDLIBS)
 
 clean :

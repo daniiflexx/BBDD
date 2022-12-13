@@ -5,9 +5,8 @@ CFLAGS = -Wall -Wextra -pedantic -ansi
 # recompile if this header changes
 HEADERS = utils.h
 
-EXE = tester
-OBJ = $(EXE).o utils.o checkUtils.o checkCreateTable.o checkReplaceExtensionByIdx.o \
-checkCreateIndex.o checkPrint.o checkFindKey.o checkAddIndexEntry.o
+EXE = menu
+OBJ = $(EXE).o utils.o 
 #all : $(EXE)
 
 
@@ -20,5 +19,3 @@ $(EXE): $(DEPS) $(OBJ)
 
 clean :
 	rm -f *.o core $(EXE)
-
-

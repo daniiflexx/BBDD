@@ -3,7 +3,6 @@
 */
 
 #include "tester.h"
-
 void fillTesterArray2()
 /** Fill test array with the following index
  * Binary tree
