@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "utils.h"
 #include <sys/stat.h>
 
@@ -78,11 +79,11 @@ static void printnode(size_t _level, size_t level, FILE * indexFileHandler, int 
     size_t l;
     size_t i;
     size_t INDEX_REGISTER_SIZE;
+
     if (node_id == -1)
        return;
     if (_level>level)
         return;
-
     INDEX_REGISTER_SIZE = sizeof(node);
     l = INDEX_HEADER_SIZE + INDEX_REGISTER_SIZE * node_id;
     fseek(indexFileHandler, l, SEEK_SET);
@@ -151,14 +152,14 @@ bool findKey(const char * book_id, const char *indexName,
             return true;
         }
         else if (result < 0) {
-            if (node.left  == -1) {
+            if (node.left  == -1 || root == -1) {
                 fclose(indexFileHandler);
                 return false;
             } else
                 *nodeIDOrDataOffset = node.left;
         }
         else {
-            if (node.right == -1) {
+            if (node.right == -1 || root == -1) {
                 fclose(indexFileHandler);
                 return false;
             } else
@@ -210,7 +211,7 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     else{
         result = fseek(indexFileHandler, 0, SEEK_END);
         stat(indexName, &st);
-        new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
+        new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE ) / 2;
         fprintf(stderr,"new_node=%d", new_node);
     }
     memcpy(node.book_id, book_id,4);
@@ -249,7 +250,7 @@ bool addTableEntry(Book * book, const char * dataName,
     size_t INDEX_REGISTER_SIZE = sizeof(Node);
     Node node;
     struct stat st;
-
+    
     /* if key exists returns false */
     result = findKey(book->book_id, indexName, &nodeIDOrDataOffset);
     if (result)
@@ -284,25 +285,8 @@ bool addTableEntry(Book * book, const char * dataName,
         new_book = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
         fprintf(stderr, "new_book=%d", new_book);
     }
-    memcpy(node.book_id, book->book_id,4);
-    node.offset = book->title_len;
-    node.right = -1;
-    node.left = -1;
-    node.parent = nodeIDOrDataOffset;
-    fwrite(&node, INDEX_REGISTER_SIZE, 1, dataFileHandler);
-    /* read parent node and update it */
-    fseek(dataFileHandler,
-          nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-          SEEK_SET);
-    fread(&node, INDEX_REGISTER_SIZE, 1, dataFileHandler);
-    if (memcmp(book->book_id,node.book_id,4) <0)
-        node.left = new_book;
-    else
-        node.right = new_book;
-    fseek(dataFileHandler,
-          nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-          SEEK_SET);
-    fwrite(&node, INDEX_REGISTER_SIZE, 1, dataFileHandler);
+    addIndexEntry(book->book_id, new_book, indexName);
+    
     fclose(dataFileHandler);
     return true;
 }

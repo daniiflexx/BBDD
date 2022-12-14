@@ -24,10 +24,12 @@ void use() {
     char buf[140];
 
     printf("Table to use: ");
+    fflush(stdout);
     if (!fgets(buf, 140, stdin)) {
         printf("\nError reading ----->\n");
         return;
     }
+    fflush(stdout);
     buf[strlen(buf)-1] = 0;
     strcpy(tableName, buf);
     replaceExtensionByIdx(buf, indexName);
@@ -35,18 +37,24 @@ void use() {
 }
 
 void insert() {
-    char buf[140], buf2[140];
+    char buf[140] = "\0", buf2[6] = "\0";
     Book book;
 
+    if (tableName == NULL || indexName == NULL ) {
+        printf("ERROR, use() function needs to be used first\n");
+        return ;
+    }
+
     printf("Key: ");
-    if (!fgets(buf2, 4, stdin)) {
+    fflush(stdout);
+    if (!fgets(buf2, (int)sizeof(buf2), stdin)) {
         printf("\nError reading ----->\n");
         return;
     }
     memcpy(book.book_id, buf2, 4);
-    fflush(stdin);
     printf("Title: ");
-    if (!fgets(buf, 140, stdin)) {
+    fflush(stdout);
+    if (!fgets(buf, (int)sizeof(buf), stdin)) {
         printf("\nError reading ----->\n");
         return;
     }
@@ -57,7 +65,11 @@ void insert() {
 }
 
 void print() {
-    return; 
+    if (tableName == NULL || indexName == NULL ) {
+        printf("ERROR, use() function needs to be used first\n");
+        return ;
+    }
+    printTree(4, indexName);
 }
 /**
  * @brief prints main menu and allows to select an option.
