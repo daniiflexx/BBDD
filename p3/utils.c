@@ -112,10 +112,14 @@ void printTree(size_t level, const char * indexName)
 
     /* try to open the file */
     indexFileHandler = fopen(indexName, "r");
+    write(1, "printnode1\n", 11);
     /* where is root? */
     fread(&node_id, sizeof(int), 1, indexFileHandler);
-    if (node_id == -1)
+    if (node_id == -1) {
+        printf("err\n");
         return;
+    }
+    write(1, "printnode2\n", 10);
     /* read first node */
     printnode(0, level, indexFileHandler, node_id, ' ');
 }
@@ -211,7 +215,7 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     else{
         result = fseek(indexFileHandler, 0, SEEK_END);
         stat(indexName, &st);
-        new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE ) / 2;
+        new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
         fprintf(stderr,"new_node=%d", new_node);
     }
     memcpy(node.book_id, book_id,4);
@@ -242,15 +246,14 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
 bool addTableEntry(Book * book, const char * dataName,
                    const char * indexName)
 {
+    int lenTitle = 0;
     int nodeIDOrDataOffset;
     int result = -1;
     FILE *dataFileHandler = NULL;
     int deleted = -1;
-    int new_book = -1;
-    size_t INDEX_REGISTER_SIZE = sizeof(Node);
-    Node node;
+    int offset;
     struct stat st;
-    
+
     /* if key exists returns false */
     result = findKey(book->book_id, indexName, &nodeIDOrDataOffset);
     if (result)
@@ -262,30 +265,19 @@ bool addTableEntry(Book * book, const char * dataName,
     /* read pointer to deleted list of registers */
     fread(&deleted, sizeof(int), 1, dataFileHandler);
     /* use available space for new node if possible*/
-    if (deleted != -1) {
-        /* read deleted node */
-        fseek(dataFileHandler,
-              deleted * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-              SEEK_SET);
-        fread(&node, INDEX_REGISTER_SIZE, 1, dataFileHandler);
-        new_book = deleted;
-        deleted = node.left;
-        /* update header node */
-        fseek(dataFileHandler, sizeof(int), SEEK_SET);
-        fwrite(&deleted, sizeof(int), 1, dataFileHandler);
-        /* move pointer to node to be recicled*/
-        fseek(dataFileHandler,
-              new_book * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-              SEEK_SET);
-    }
-        /* add node at the end of the file */
-    else{
+    if (deleted == -1) {
+        lenTitle = strlen(book->title);
+        stat(indexName, &st);
+        offset = st.st_size;
         fseek(dataFileHandler, 0, SEEK_END);
-        stat(dataName, &st);
-        new_book = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
-        fprintf(stderr, "new_book=%d", new_book);
+        fwrite(book->book_id, PK_SIZE, 1, dataFileHandler);
+        fwrite(&lenTitle, sizeof(int), 1, dataFileHandler);
+        fwrite(book->title, lenTitle, 1, dataFileHandler);
     }
-    addIndexEntry(book->book_id, new_book, indexName);
+    /* add node at the end of the file */
+    else
+        printf("Queda fuera de nuestro control. CALLAO!!!");
+    addIndexEntry(book->book_id, offset, indexName);
     
     fclose(dataFileHandler);
     return true;
