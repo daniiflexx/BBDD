@@ -215,34 +215,35 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
         result = fseek(indexFileHandler, 0, SEEK_END);
         stat(indexName, &st);
         new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
-        fseek(indexFileHandler, sizeof(int), SEEK_SET);
+        printf("size%dsiz\n", (int)st.st_size);
         if (first == -1) {
+            fseek(indexFileHandler, sizeof(int), SEEK_SET);
             fclose(indexFileHandler);
             indexFileHandler = fopen(indexName, "w");
             fclose(indexFileHandler);
             indexFileHandler = fopen(indexName, "rb+");
             fwrite(&new_node, sizeof(int), 1, indexFileHandler);
             fwrite(&menos_uno, sizeof(int), 1, indexFileHandler);
+            fprintf(stderr,"new_node=%d", new_node);
         }
-        fprintf(stderr,"new_node=%d", new_node);
+        else
+            fprintf(stderr,"new_node=%d", new_node - 1);
+
     }
     memcpy(node.book_id, book_id,4);
     node.offset = bookOffset;
     node.right = -1;
     node.left = -1;
     node.parent = nodeIDOrDataOffset;
-    result = fseek(indexFileHandler, 0, SEEK_END);
     result = fwrite(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     /* read parent node and update it */
-    result = fseek(indexFileHandler,
-    nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,        SEEK_SET);
+    result = fseek(indexFileHandler, nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,        SEEK_SET);
     result = fread(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     if (memcmp(book_id,node.book_id,4) <0)
         node.left = new_node;
     else
         node.right = new_node;
-    result = fseek(indexFileHandler,
-    nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,    SEEK_SET);
+    result = fseek(indexFileHandler, nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,    SEEK_SET);
     result = fwrite(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     result = fclose(indexFileHandler);
     return true;
@@ -274,7 +275,7 @@ bool addTableEntry(Book * book, const char * dataName,
     /* use available space for new node if possible*/
     if (deleted == -1) {
         lenTitle = strlen(book->title);
-        stat(indexName, &st);
+        stat(dataName, &st);
         offset = st.st_size;
         fseek(dataFileHandler, 0, SEEK_END);
         fwrite(book->book_id, PK_SIZE, 1, dataFileHandler);
