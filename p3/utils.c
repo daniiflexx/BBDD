@@ -112,14 +112,12 @@ void printTree(size_t level, const char * indexName)
 
     /* try to open the file */
     indexFileHandler = fopen(indexName, "r");
-    write(1, "printnode1\n", 11);
     /* where is root? */
     fread(&node_id, sizeof(int), 1, indexFileHandler);
     if (node_id == -1) {
-        printf("err\n");
-        return;
+        printf("error\n");
+        return ;
     }
-    write(1, "printnode2\n", 10);
     /* read first node */
     printnode(0, level, indexFileHandler, node_id, ' ');
 }
@@ -176,8 +174,9 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     int nodeIDOrDataOffset;
     int result = -1;
     FILE *indexFileHandler = NULL;
-    int deleted = -1;
+    int deleted = -1, first = -1;
     int new_node = -1;
+    int menos_uno = -1;
     size_t INDEX_REGISTER_SIZE = sizeof(Node);
     Node node;
     struct stat st;
@@ -191,7 +190,7 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     /* check for deleted registers */
     indexFileHandler = fopen(indexName, "rb+");
     /* skip pointer to root node */
-    result = fread(&deleted, sizeof(int), 1, indexFileHandler);
+    result = fread(&first, sizeof(int), 1, indexFileHandler);
     /* read pointer to deleted list of registers */
     result = fread(&deleted, sizeof(int), 1, indexFileHandler);
     /* use available space for new node if possible*/
@@ -216,6 +215,15 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
         result = fseek(indexFileHandler, 0, SEEK_END);
         stat(indexName, &st);
         new_node = ((st.st_size - INDEX_HEADER_SIZE) / INDEX_REGISTER_SIZE );
+        fseek(indexFileHandler, sizeof(int), SEEK_SET);
+        if (first == -1) {
+            fclose(indexFileHandler);
+            indexFileHandler = fopen(indexName, "w");
+            fclose(indexFileHandler);
+            indexFileHandler = fopen(indexName, "rb+");
+            fwrite(&new_node, sizeof(int), 1, indexFileHandler);
+            fwrite(&menos_uno, sizeof(int), 1, indexFileHandler);
+        }
         fprintf(stderr,"new_node=%d", new_node);
     }
     memcpy(node.book_id, book_id,4);
@@ -223,19 +231,18 @@ bool addIndexEntry(char * book_id,  int bookOffset, char const * indexName) {
     node.right = -1;
     node.left = -1;
     node.parent = nodeIDOrDataOffset;
+    result = fseek(indexFileHandler, 0, SEEK_END);
     result = fwrite(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     /* read parent node and update it */
     result = fseek(indexFileHandler,
-          nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-          SEEK_SET);
+    nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,        SEEK_SET);
     result = fread(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     if (memcmp(book_id,node.book_id,4) <0)
         node.left = new_node;
     else
         node.right = new_node;
     result = fseek(indexFileHandler,
-          nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,
-          SEEK_SET);
+    nodeIDOrDataOffset * INDEX_REGISTER_SIZE + INDEX_HEADER_SIZE,    SEEK_SET);
     result = fwrite(&node, INDEX_REGISTER_SIZE, 1, indexFileHandler);
     result = fclose(indexFileHandler);
     return true;
