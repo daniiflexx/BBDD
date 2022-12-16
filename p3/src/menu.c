@@ -5,9 +5,7 @@
  * @brief File containing a menu system with submenus
  *
  * The following program allows a user to select different options
- * from a business menu. The menu has two levels, the top
- * one allows to select between products, orders or customers. The
- * second level (sub-menus) allow to select different options of this areas.
+ * from a database menu.
  *
  */
 
@@ -31,26 +29,36 @@ void use() {
     }
     fflush(stdout);
     buf[strlen(buf)-1] = 0;
+    if (strlen(buf) < 5 || strncmp(buf + strlen(buf) - 4, ".dat", 4) != 0) {
+        printf("ERROR, file must be a valid .dat\n\n");
+        return ;
+    }
     strcpy(tableName, buf);
     replaceExtensionByIdx(buf, indexName);
     createTable(buf);
 }
 
 void insert() {
-    char buf[140] = "\0", buf2[6] = "\0";
+    char buf[140] = "\0", buf2[140] = "\0";
     Book book;
 
-    if (tableName == NULL || indexName == NULL ) {
-        printf("ERROR, use() function needs to be used first\n");
+    if (tableName[0] == '\0' || indexName[0] == '\0' ) {
+        printf("ERROR, use() function needs to be used first\n\n");
         return ;
     }
 
     printf("Key: ");
     fflush(stdout);
-    if (!fgets(buf2, (int)sizeof(buf2), stdin)) {
+    if (!fgets(buf2, 140, stdin)) {
         printf("\nError reading ----->\n");
         return;
     }
+    if (strlen(buf2) != 5)
+    {
+        printf("\nKey must be size 4 ----->\n");
+        return;
+    }
+    buf2[4] = '\0';
     memcpy(book.book_id, buf2, 4);
     printf("Title: ");
     fflush(stdout);
@@ -61,14 +69,18 @@ void insert() {
     buf[strlen(buf)-1] = 0;
     book.title_len = strlen(buf);
     book.title = buf;
-    addTableEntry(&book, tableName, indexName);
+    if (addTableEntry(&book, tableName, indexName) == false) {
+        printf("ERROR inserting tuple\n\n");
+    }
 }
 
 void print() {
-    if (tableName == NULL || indexName == NULL ) {
-        printf("ERROR, use() function needs to be used first\n");
+    
+    if (tableName[0] == '\0' || indexName[0] == '\0' ) {
+        printf("ERROR, use() function needs to be used first\n\n");
         return ;
     }
+    
     printTree(4, indexName);
 }
 /**
@@ -120,7 +132,7 @@ static int ShowMainMenu() {
  * corresponding submenu
  *
  * @return 0 if no error
- * @author rmarabini
+ * @author Iñigo Alvarez and Daniel Cruz
  */
 int main(void) {
     int nChoice = 0;

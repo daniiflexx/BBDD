@@ -3,22 +3,27 @@ CFLAGS = -Wall -Wextra -pedantic -ansi
 # LDLIBS = -lodbc
 
 # recompile if this header changes
-HEADERS = utils.h
+HEADERS = ./inc/utils.h
 
 EXE = tester
-OBJ = $(EXE).o utils.o checkUtils.o checkCreateTable.o checkReplaceExtensionByIdx.o \
-checkCreateIndex.o checkPrint.o checkFindKey.o checkAddIndexEntry.o
-#all : $(EXE)
+SRCS = src/$(EXE).c src/utils.c src/checkUtils.c src/checkCreateTable.c src/checkReplaceExtensionByIdx.c \
+src/checkCreateIndex.c src/checkPrint.o src/checkFindKey.c src/checkAddIndexEntry.c
+OBJS = $(patsubst src/%, obj/%, $(SRCS:.c=.o))
+INC = -I inc
+all : $(EXE)
 
 
-%.o: %.c $(HEADERS)
+obj/%.o: src/%.c $(HEADERS)
 	@echo Compiling $<...
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $< $(INC)
 
-$(EXE): $(DEPS) $(OBJ)
-	$(CC) -o $(EXE) $(OBJ) $(LDLIBS)
+$(EXE): $(DEPS) $(OBJS)
+	$(CC) -o $(EXE) $(OBJS) $(LDLIBS) $(INC)
 
 clean :
-	rm -f *.o core $(EXE)
+	rm -f obj/*.o core $(EXE)
+
+fclean: clean
+	rm -f tester *.txt *.dat *.idx
 
 
