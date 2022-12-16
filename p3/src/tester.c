@@ -19,7 +19,7 @@ void checkReplaceExtensionByIdx(const char * tableName,
                                 const char * indexName);
 void checkCreateIndex(const char * indexName);
 void checkCreateTable(const char * tableName);
-
+void checkAddTableEntry(const char * tableName);
 void checkPrint(const char * indexName);
 void createTestIndexFile(const char * indexName);
 void checkFindKey(const char * indexName);
@@ -33,6 +33,7 @@ Book b[TEST_ARRAY_SIZE];
 int main() {
     const char *tableName = "myDataBase.dat";
     const char *indexName = "myDataBase.idx";
+    const char *tableName2 = "tableBase.dat";
 
     /* remove file if exists */
     remove(tableName);
@@ -49,6 +50,8 @@ int main() {
     checkPrint(indexName);
     checkFindKey(indexName);
     checkAddIndexEntry(indexName);
+    checkAddTableEntry(tableName2);
+
 #ifdef NEVERDEFINED
 #endif
     return (0);

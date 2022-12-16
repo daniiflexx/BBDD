@@ -7,7 +7,7 @@ HEADERS = ./inc/utils.h
 
 EXE = tester
 SRCS = src/$(EXE).c src/utils.c src/checkUtils.c src/checkCreateTable.c src/checkReplaceExtensionByIdx.c \
-src/checkCreateIndex.c src/checkPrint.o src/checkFindKey.c src/checkAddIndexEntry.c
+src/checkCreateIndex.c src/checkPrint.o src/checkFindKey.c src/checkAddIndexEntry.c src/checkAddTableEntry.c
 OBJS = $(patsubst src/%, obj/%, $(SRCS:.c=.o))
 INC = -I inc
 all : $(EXE)

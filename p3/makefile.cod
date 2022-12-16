@@ -19,6 +19,9 @@ obj/%.o: src/%.c $(HEADERS)
 $(EXE): $(DEPS) $(OBJS)
 	$(CC) -o $(EXE) $(OBJS) $(LDLIBS) $(INC)
 
+run:
+	./menu
+
 clean :
 	rm -f obj/*.o core $(EXE)
 
