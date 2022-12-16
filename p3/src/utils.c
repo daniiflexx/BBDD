@@ -147,10 +147,12 @@ void printTree(size_t level, const char * indexName)
         return;
     fread(&node_id, sizeof(int), 1, indexFileHandler);
     if (node_id == -1) {
-        printf("error\n");
+        printf("Empty file\n");
+        fclose(indexFileHandler);
         return ;
     }
     printnode(0, level, indexFileHandler, node_id, ' ');
+    fclose(indexFileHandler);
 }
 
 /**
