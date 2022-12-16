@@ -18,6 +18,10 @@
 char tableName[140] = "\0";
 char indexName[140] = "\0";
 
+/**
+ * @author Daniel Cruz and Iñigo Alvarez
+ * @brief starts a table
+ */
 void use() {
     char buf[140];
 
@@ -38,6 +42,10 @@ void use() {
     createTable(buf);
 }
 
+/**
+ * @author Daniel Cruz and Iñigo Alvarez
+ * @brief inserts a tuple
+ */
 void insert() {
     char buf[140] = "\0", buf2[140] = "\0";
     Book book;
@@ -74,6 +82,11 @@ void insert() {
     }
 }
 
+/**
+ * @author Daniel Cruz and Iñigo Alvarez
+ * @brief prints the table
+ * 
+ */
 void print() {
     
     if (tableName[0] == '\0' || indexName[0] == '\0' ) {
